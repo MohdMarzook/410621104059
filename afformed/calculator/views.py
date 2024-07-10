@@ -16,11 +16,7 @@ numbers = {
 }
 
 
-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJNYXBDbGFpbXMiOnsiZXhwIjoxNzIwNTkwNTk5LCJpYXQiOjE3MjA1OTAyOTksImlzcyI6IkFmZm9yZG1lZCIsImp0aSI6ImZlNjBhZjc0LWYzNmQtNGVkOS1iZjUyLTA3Nzk5N2JjYjU2OSIsInN1YiI6Im1tb2hhbWVkbWFyem9vazA3MDFAZ21haWwuY29tIn0sImNvbXBhbnlOYW1lIjoiVW50aXRsZWQiLCJjbGllbnRJRCI6ImZlNjBhZjc0LWYzNmQtNGVkOS1iZjUyLTA3Nzk5N2JjYjU2OSIsImNsaWVudFNlY3JldCI6InBnVnJXZ1JWTFppUGlmTmMiLCJvd25lck5hbWUiOiJNYXJ6b29rIiwib3duZXJFbWFpbCI6Im1tb2hhbWVkbWFyem9vazA3MDFAZ21haWwuY29tIiwicm9sbE5vIjoiNDEwNjIxMTA0MDU5In0.jm1ZWFJgqxSK0NJs3IDvNrCjl07XANUeooP3Tmu6kmc"
-headers = {
-    'Authorization': f'Bearer {token}',
-    'Content-Type': 'application/json'
-}
+
 
 def fetch_numbers_from_test_server(qualified_id):
     try:
@@ -32,8 +28,13 @@ def fetch_numbers_from_test_server(qualified_id):
             "ownerEmail": "mmohamedmarzook0701@gmail.com",
             "rollNo": "410621104059"
             }
-        auth_token = requests.get(url="http://20.244.56.144/test/auth", json=req)
-        print(auth_token.text)
+        auth_token = requests.post(url="http://20.244.56.144/test/auth", json=req)
+        auth_token = auth_token.json()
+        token = auth_token["access_token"]
+        headers = {
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
         response = requests.get(f"{TEST_SERVER_URL}/{qualified_id}", timeout=0.5,headers=headers)
         response.raise_for_status()
         return response.json().get('numbers', [])
